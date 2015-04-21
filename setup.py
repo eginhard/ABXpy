@@ -78,5 +78,11 @@ setup(
         'abx-distance = ABXpy.distance:main',
         'abx-analyze = ABXpy.analyze:main',
         'abx-score = ABXpy.score:main',
-    ]}
+    ]},
+
+    scripts=[
+        "bin/prepare_eval1.py",
+        "bin/english_eval1.py",
+        "bin/xitsonga_eval1.py",
+        "bin/sample_eval1.py",],
 )

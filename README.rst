@@ -23,7 +23,8 @@ Preparation (only once):
 	  python bin/prepare.py
 
 .. note:: This script can take a while, you can select which corpus to prepare with the '-c' option.
-	  e.g.: python bin/prepare.py -c sample
+	  
+	  E.g.: python bin/prepare.py -c sample
 
 Run:
 ~~~~
@@ -32,15 +33,17 @@ Run:
 
 	  python bin/{sample, english, xitsonga}_eval1.py FEATURES_FOLDER OUTPUT_FOLDER
 
-FEATURES_FOLDER::
+FEATURES_FOLDER:
 
   Our evaluation system requires that your unsupervised subword modeling system outputs a vector of feature values for each frame. For each utterance in the set (e.g. s2801a.wav), an ASCII features file with the same name (e.g. s2801a.fea) as the utterance should be generated with the following format:
 
+::
      <time> <val1>    ... <valN>
      <time> <val1>    ... <valN>
 
   example:
 
+::
      0.0125 12.3 428.8 -92.3 0.021 43.23         
      0.0225 19.0 392.9 -43.1 10.29 40.02
 

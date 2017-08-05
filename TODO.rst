@@ -25,15 +25,13 @@ Project wide TODOs
 
 * proper copyright in source
 
-* correct the multicore bug **DONE?**
-
-* integrate a generic collapse to ABX-score and output in R and csv format **URGENT**
+* integrate a generic collapse to ABX-score and output in R and csv
+  format **URGENT**
 
 * more complete test suite
 
 * more complete documentation
 
-* improve travis integration
 
 On task.py
 ==========
@@ -109,17 +107,13 @@ On database.py
 
 * Remove the second # from database.item::
 
-   ======= ======= ====== ======== ======= =======
    #source onset   offset #label 1 label 2 label 3
-   ======= ======= ====== ======== ======= =======
-   file 1  start 1 stop 1 value 1  value 1 value 1
-   file 2  start 2 stop 2 value 2  value 1 value 1
-   file 3  start 3 stop 3 value 3  value 1 value 1
-   ======= ======= ====== ======== ======= =======
 
 
 On distance.py
 ==============
+
+* correct the multicore bug **DONE?**
 
 * Merge main() functions in distance and distances/distances
 
@@ -133,3 +127,9 @@ On distance.py
 * Write distances in a separate file. DONE ?
 
 * Race condition in parallel computation -> 10 seconds wait to remove.
+
+  
+On score.py
+===========
+
+* Include distance computation in that module

@@ -96,7 +96,7 @@ def fullrun(task, verbose):
     across = nonesplit(lookup('across', task))
     by = nonesplit(lookup('by', task))
     try:
-        t = ABXpy.task.Task(itemfilename, on, across, by, verify=False, verbose=verbose)
+        t = ABXpy.task.Task(itemfilename, on, across, by, verbose=verbose)
         t.generate_triplets(output=taskfilename)
     except:
         raise

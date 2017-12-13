@@ -1,7 +1,8 @@
 import os
 import sys
 import ABXpy.task
-from ABXpy.distance import default_distance
+import ABXpy.distances.metrics.cosine as cosine
+import ABXpy.distances.metrics.dtw as dtw
 import ABXpy.distances.distances as distances
 import ABXpy.score as score
 import ABXpy.analyze as analyze
@@ -72,6 +73,10 @@ class Discarder(object):
 
 def modified(filepath, mtime):
     return not os.path.exists(filepath) or (mtime > os.path.getmtime(filepath))
+
+
+def dtw_cosine_distance(x, y):
+    return dtw.dtw(x, y, cosine.cosine_distance, normalized=1)
 
 
 def parseConfig(configfile):
@@ -215,8 +220,8 @@ def fullrun(task, feature_folder, distance, outputdir, doall=True, ncpus=None, k
             sys.path.insert(0, path)
             distancefun = getattr(__import__(mod), distancefunction)
         else:
-            distancemodule = lookup('distancemodule', task, os.path.join(curdir, 'resources/distance'))
-            distancefunction = lookup('distancefunction', task, 'distance')
+            distancemodule = lookup('distancemodule', task, os.path.join(curdir, 'ABXpy/distance'))
+            distancefunction = lookup('distancefunction', task, 'default_distance')
             path, mod = os.path.split(distancemodule)
             sys.path.insert(0, path)
             distancefun = getattr(__import__(mod), distancefunction)
@@ -269,7 +274,7 @@ def fullrun(task, feature_folder, distance, outputdir, doall=True, ncpus=None, k
         print("Computing the distances")
         tryremove(distance_file)
         distances.compute_distances(feature_file, '/features/', taskfilename,
-                                    distance_file, default_distance, normalized=1, n_cpu=ncpus)
+                                    distance_file, distancefun, normalized=1, n_cpu=ncpus)
 
         tryremove(scorefilename)
         print("Computing the scores")

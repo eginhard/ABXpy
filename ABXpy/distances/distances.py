@@ -150,8 +150,8 @@ HDF5 (based on MPI-IO).
 
 def run_distance_job(job_description, distance_file, distance,
                      feature_files, feature_groups, splitted_features,
-                     job_id, normalize, distance_file_lock=None):
-    if distance_file_lock is None:
+                     job_id, normalize):
+    if lock is None:
         synchronize = False
     else:
         synchronize = True
@@ -192,6 +192,8 @@ def run_distance_job(job_description, distance_file, distance,
             accessor = Features_Accessor(times, features)
             get_features = accessor.get_features_from_splitted
         # load pandas dataframe containing info for loading the features
+        if synchronize:
+            lock.acquire()
         store = pandas.HDFStore(pair_file)
         by_db = store['feat_dbs/' + by]
         store.close()
@@ -201,6 +203,9 @@ def run_distance_job(job_description, distance_file, distance,
             attrs = fh['unique_pairs'].attrs[by]
             pair_list = fh['unique_pairs/data'][attrs[1]+start:attrs[1]+stop, 0]
             base = attrs[0]
+        if synchronize:
+            lock.release()
+
 
         A = np.mod(pair_list, base)
         B = pair_list // base
@@ -257,11 +262,11 @@ def run_distance_job(job_description, distance_file, distance,
                 )
                 raise
         if synchronize:
-            distance_file_lock.acquire()
+            lock.acquire()
         with h5py.File(distance_file) as fh:
             fh['distances/data'][attrs[1]+start:attrs[1]+stop, :] = dis
         if synchronize:
-            distance_file_lock.release()
+            lock.release()
 
 
 # mem in megabytes
@@ -292,15 +297,20 @@ def compute_distances(feature_file, feature_group, pair_file, distance_file,
     # if splitted_features:
     #    split_feature_file(feature_file, feature_group, pair_file)
     jobs = create_distance_jobs(pair_file, distance_file, n_cpu)
-    # results = []
     if n_cpu > 1:
         # use of a manager seems necessary because we're using a Pool...
-        distance_file_lock = multiprocessing.Manager().Lock()
-        pool = multiprocessing.Pool(n_cpu)
+        def init(l):
+            global lock
+            lock = l
+
+        distance_file_lock = multiprocessing.Lock()
+        pool = multiprocessing.Pool(n_cpu, initializer=init, initargs=(distance_file_lock,))
         args = [(job, distance_file, distance, feature_files, feature_groups,
-                 splitted_features, i, normalized, distance_file_lock)
+                 splitted_features, i, normalized)
                 for i, job in enumerate(jobs)]
         pool.map(worker, args)
+        pool.close()
+        pool.join()
     else:
         run_distance_job(jobs[0], distance_file, distance,
                          feature_files, feature_groups, splitted_features, 1, normalized)

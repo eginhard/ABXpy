@@ -17,7 +17,8 @@ import ABXpy.misc.tinytree as tinytree
 # custom read_table that ignore empty entries at the end of a file (they
 # can result from trailing white spaces at the end for example)
 def read_table(filename):
-    db = pandas.read_table(filename, sep='[ \t]+', engine='python')
+    db = pandas.read_table(filename, sep='[ \t]+', engine='python',
+                           names=['#file', 'onset', 'offset', '#phone', 'context', 'talker'])
     # removes row with all null values (None or NaN...)
     db = db.dropna(how='all')
     return db

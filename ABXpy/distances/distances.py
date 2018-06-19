@@ -151,10 +151,10 @@ HDF5 (based on MPI-IO).
 def run_distance_job(job_description, distance_file, distance,
                      feature_files, feature_groups, splitted_features,
                      job_id, normalize):
-    if lock is None:
-        synchronize = False
-    else:
+    if 'lock' in globals():
         synchronize = True
+    else:
+        synchronize = False
     if not(splitted_features):
         times = {}
         features = {}
@@ -206,7 +206,6 @@ def run_distance_job(job_description, distance_file, distance,
         if synchronize:
             lock.release()
 
-
         A = np.mod(pair_list, base)
         B = pair_list // base
         pairs = np.column_stack([A, B])
@@ -221,6 +220,7 @@ def run_distance_job(job_description, distance_file, distance,
         # FIXME: second dim is 1 because of the way it is stored to disk,
         # but ultimately it shouldn't be necessary anymore
         # (if using axis arg in np2h5, h52np and h5io...)
+        print("%d pairs" % n_pairs)
         for i in range(n_pairs):
             dataA = features[pairs[i, 0]]
             dataB = features[pairs[i, 1]]

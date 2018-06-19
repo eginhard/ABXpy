@@ -274,7 +274,7 @@ def fullrun(task, feature_folder, distance, outputdir, doall=True, ncpus=None, k
         print("Computing the distances")
         tryremove(distance_file)
         distances.compute_distances(feature_file, '/features/', taskfilename,
-                                    distance_file, distancefun, normalized=1, n_cpu=ncpus)
+                                    distance_file, distancefun, normalized=0, n_cpu=ncpus)
 
         tryremove(scorefilename)
         print("Computing the scores")
